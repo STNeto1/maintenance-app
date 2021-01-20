@@ -11,19 +11,22 @@ class User
     $this->conn = (new Database())->dbConnection();
   }
 
-  public function insert(string $name, string $username, string $password): bool|PDOStatement
+  public function insert(string $name, string $username, string $password): array
   {
     $passwd = password_hash($password, PASSWORD_DEFAULT);
-    $role = 1;
+    $role = 2;
+
+    // 1 - manager
+    // 2 - normal user
 
     try {
-      $stmt = $this->conn->prepare("INSERT INTO users (name, username, password, role) VALUES (:name, :username, :password, :role)");
+      $stmt = $this->conn->prepare("INSERT INTO user (name, username, password, role) VALUES (:name, :username, :password, :role)");
       $stmt->bindParam(":name", $name);
       $stmt->bindParam(":username", $username);
       $stmt->bindParam(":password", $passwd);
       $stmt->bindParam(":role", $role);
       $stmt->execute();
-      return $stmt;
+      return self::findUserByUsername($username);
 
     } catch (PDOException $exception) {
       die($exception->getMessage());
@@ -44,8 +47,20 @@ class User
   public function findUserById(int $id)
   {
     try {
-      $stmt = $this->conn->prepare("SELECT id, username, name, role FROM users WHERE id = :id");
+      $stmt = $this->conn->prepare("SELECT id, username, name, role FROM user WHERE id = :id");
       $stmt->bindParam(":id", $id);
+      $stmt->execute();
+      return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $exception) {
+      die($exception->getMessage());
+    }
+  }
+
+  public function findUserByUsername(string $username): array
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT id, username, name, role FROM user WHERE username = :username");
+      $stmt->bindParam(":username", $username);
       $stmt->execute();
       return $stmt->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $exception) {
@@ -57,7 +72,7 @@ class User
   {
     try {
       $search = "%$name%";
-      $stmt = $this->conn->prepare("SELECT id, username, name, role FROM users WHERE name LIKE ?");
+      $stmt = $this->conn->prepare("SELECT id, username, name, role FROM user WHERE name LIKE ?");
       $stmt->execute([$search]);
       return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $exception) {

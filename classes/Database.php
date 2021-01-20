@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 
 class Database
 {
@@ -10,7 +11,7 @@ class Database
 
   public PDO $conn;
 
-  public function dbConnection()
+  public function dbConnection(): PDO
   {
     try {
       $this->conn = new PDO("mysql:host=$this->host;dbname=$this->dbName", $this->username, $this->password);
