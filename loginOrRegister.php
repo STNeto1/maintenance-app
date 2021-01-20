@@ -5,6 +5,8 @@ require_once "classes/User.php";
 $obUser = new User();
 
 if (isset($_POST['type'])) {
+  session_start();
+
   if ($_POST['type'] == 'login') {
     if (isset($_POST['username'], $_POST['password'])) {
       // check if user exists
@@ -24,6 +26,8 @@ if (isset($_POST['type'])) {
       } else {
         header('location login.php?status=not-found');
       }
+    }else{
+      header('location login.php?status=missing-info');
     }
   }
 
@@ -45,6 +49,7 @@ if (isset($_POST['type'])) {
       }
     }
   }
+  header('location index.php?status=login');
 } else {
   header('location login.php?status=invalid');
 }

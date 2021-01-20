@@ -56,10 +56,10 @@ class User
     }
   }
 
-  public function findUserByUsername(string $username): array
+  public function findUserByUsername(string $username): bool|array
   {
     try {
-      $stmt = $this->conn->prepare("SELECT id, username, name, role FROM user WHERE username = :username");
+      $stmt = $this->conn->prepare("SELECT * FROM user WHERE username = :username");
       $stmt->bindParam(":username", $username);
       $stmt->execute();
       return $stmt->fetch(PDO::FETCH_ASSOC);

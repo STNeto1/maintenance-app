@@ -1,10 +1,12 @@
 <?php
 
-include "includes/header.php";
-
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
+session_start();
+session_regenerate_id();
+if ($_SESSION['logged_in']) {
   header('location: index.php');
 }
+
+include "includes/header.php";
 
 ?>
 
@@ -13,6 +15,10 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
     <?php if ($_GET['status'] == "invalid"): ?>
           <div class="alert alert-danger">
               <strong>Invalid Request</strong>
+          </div>
+    <?php elseif ($_GET['status'] == "auth-required") : ?>
+          <div class="alert alert-danger">
+              <strong>You have to login or register to access the home</strong>
           </div>
     <?php endif; ?>
   <?php endif; ?>
