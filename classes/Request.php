@@ -38,10 +38,9 @@ class Request
                                               r.id as id,
                                               r.title as title,
                                               r.finished as finished,
-                                              r.user_id as user_id,
                                               r.manager_id as manager,
                                               u.name as name,
-                                              u.role as role
+                                              r.createdAt
                                           FROM request AS r
                                           LEFT JOIN USER AS u
                                           ON r.user_id = u.id;");
